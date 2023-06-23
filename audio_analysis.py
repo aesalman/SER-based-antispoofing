@@ -15,7 +15,9 @@ prosody=Prosody()
 phonation=Phonation()
 articulation=Articulation()
 
-DATA_DIR = os.path.dirname(os.getcwd()) +  '/audio_data/Famous_Figures/Test/'
+# DATA_DIR = os.path.dirname(os.getcwd()) +  '/audio_data/Famous_Figures/Test/'
+
+DATA_DIR = os.getcwd() +  '/Famous_Figures/Test/'
 
 label_map = {'F0':"frequency (Hz)", 'F1':"frequency (Hz)", 'F2':"frequency (Hz)", 'voiced_rate': 'voiced segments per second',
              'Energy': "Energy (db)", 'jitter': 'variation in periodicity', 'Shimmer': 'micro-instability of vocal cord vibration',
