@@ -21,7 +21,7 @@ Once, the environment is activated, run the following command in the parent dire
 `pip3 install -r requiremnts.txt`
 
 ## Usage
-Download the famous figures dataset at the root of this repository.
+Download the [famous figures](https://drive.google.com/drive/folders/1bCWCn8zv72pUIl4NlAg78bILscIfQTH5?usp=drive_link) dataset at the root of this repository.
 
 main.py gives an example of how you can generate features and plot them. At the start of this file, give the speaker names for whom you want to generate the features.
 
