@@ -28,6 +28,28 @@ def create_list_defaultdict():
     return defaultdict(list)
 
 
+def extract_full_features(speaker_name):
+
+    speaker_folder = DATA_DIR + speaker_name + '/'
+
+    speaker_folder_ls = os.listdir(speaker_folder)
+
+    wav_files = list(Path(speaker_folder).glob("**/*.wav"))
+
+    for wf in wav_files:
+
+        filename = wf.as_posix()
+
+        prosody_feat = prosody.extract_features_file(filename, static=True, plots=False, fmt="npy")
+        phonation_feat = phonation.extract_features_file(filename, static=True, plots=False, fmt="npy")[0]
+        articulation_feat = articulation.extract_features_file(filename, static=True, plots=False, fmt="npy")[0]
+
+        print(prosody_feat.shape)
+        print(phonation_feat.shape)
+        print(articulation_feat.shape)
+
+
+
 # generate required features dict
 def gen_features_dict(speaker_folder):
 
@@ -136,7 +158,7 @@ def plot_speaker_features(speaker_dict, speaker_name, out_dir='./'):
     # plt.tight_layout()
     fig.suptitle(speaker_name + " Analysis", fontsize=30, y=1)
     # plt.title(speaker_name + " Analysis", fontsize=30)
-    plt.savefig(out_dir + "Barack Obama Analsysis.png", dpi=50, bbox_inches='tight')
+    plt.savefig(out_dir + speaker_name + "_Analsysis.png", dpi=50, bbox_inches='tight')
     fig.show()
 
 
