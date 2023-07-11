@@ -20,6 +20,9 @@ Once, the environment is activated, run the following command in the parent dire
 
 `pip3 install -r requiremnts.txt`
 
+We are using disvoice to extract prosody and articulation features, disvoice needs praat which can be installed using
+`sudo apt-get install praat`
+
 ## Usage
 Download the [famous figures](https://drive.google.com/drive/folders/1bCWCn8zv72pUIl4NlAg78bILscIfQTH5?usp=drive_link) dataset at the root of this repository.
 
