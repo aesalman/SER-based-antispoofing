@@ -16,9 +16,11 @@ speaker_names = ['Barack_Obama', 'Elon_Musk', 'Donald_Trump']
 
 # location where the features will be saved
 output_path = './output/'
+if not os.path.exists(output_path):
+    os.mkdir(output_path)
 
 # boolean variables for genrating features and plot
-genrate_features = True
+genrate_features = False
 generate_plot = True
 
 # generating and saving dictionary
@@ -59,6 +61,8 @@ if generate_plot:
     plot_speaker_features(Obama_dict, 'Barack Obama', out_dir=output_path)
     plot_speaker_features(Musk_dict, 'Elon Musk', out_dir=output_path)
     plot_speaker_features(Trump_dict, 'Donald Trump', out_dir=output_path)
+
+    plt.show()
 
     print('Press any button + Enter to close the figures:')
     input()
