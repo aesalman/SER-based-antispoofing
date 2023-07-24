@@ -1,12 +1,19 @@
+import os
+
 from elevenlabs import voices, generate, set_api_key, play
 
-set_api_key("76b67138b806d733c44f4824a468bc29")
+from dotenv import load_dotenv
+load_dotenv()
+
+elevenlabs_api_key = os.getenv('ELEVELLAB_API_KEY')
+
+set_api_key(elevenlabs_api_key)
 
 voices = voices()
 
 # print(voices)
 # print(type(voices))
 
-audio = generate(text="Hi! My name is Bella, nice to meet you!", voice=voices[8])
+audio = generate(text="Hi! My name is Bella, nice to meet you!", voice=voices[9])
 
 play(audio)
