@@ -4,6 +4,7 @@ import re
 import csv
 from pydub import AudioSegment
 import speech_recognition as sr
+import noisereduce as nr
 
 def transcribe_audio(audio_path):
     r = sr.Recognizer()
@@ -29,7 +30,7 @@ def combine_audio_files(input_folder):
 
     return combined_audio
 
-def split_audio_into_chunks(audio, chunk_duration):
+def split_audio_into_chunks(audio, chunk_duration, sr=48000):
     metadata = []
 
     # Create an output directory
@@ -52,7 +53,11 @@ def split_audio_into_chunks(audio, chunk_duration):
 
         # Extract the chunk from the audio and export as a single audio file
         chunk = audio[start_time:end_time]
-        chunk.export(output_file, format="wav")
+        
+        # for noise reduction
+        chunk_reduced_noise = nr.reduce_noise(y=chunk, sr=sr)
+        chunk_reduced_noise.export(output_file, format="wav")
+
         transcript = transcribe_audio(output_file)
         metadata.append([os.path.basename(output_file), transcript])
         # Update the start time and chunk index for the next chunk
