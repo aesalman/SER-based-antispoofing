@@ -1,6 +1,9 @@
 from disvoice.prosody import Prosody
 from phonation import Phonation
 from articulation import Articulation
+from phonological import Phonological
+from glottal import Glottal
+from replearning import RepLearning
 
 
 import matplotlib.pyplot as plt
@@ -14,6 +17,9 @@ import pickle
 prosody=Prosody()
 phonation=Phonation()
 articulation=Articulation()
+phonological=Phonological()
+glottal = Glottal()
+replearning=RepLearning('CAE')
 
 # DATA_DIR = os.path.dirname(os.getcwd()) +  '/audio_data/Famous_Figures/Test/'
 
@@ -28,13 +34,11 @@ def create_list_defaultdict():
     return defaultdict(list)
 
 
-def extract_full_features(speaker_name):
-
-    speaker_folder = DATA_DIR + speaker_name + '/'
-
-    speaker_folder_ls = os.listdir(speaker_folder)
+def extract_full_features(speaker_folder):
 
     wav_files = list(Path(speaker_folder).glob("**/*.wav"))
+
+    feat_ls = []
 
     for wf in wav_files:
 
@@ -43,10 +47,31 @@ def extract_full_features(speaker_name):
         prosody_feat = prosody.extract_features_file(filename, static=True, plots=False, fmt="npy")
         phonation_feat = phonation.extract_features_file(filename, static=True, plots=False, fmt="npy")[0]
         articulation_feat = articulation.extract_features_file(filename, static=True, plots=False, fmt="npy")[0]
+        # phonological_feat = phonological.extract_features_file(filename, static=True, plots=False, fmt="npy")[0]
+        # glottal_feat = glottal.extract_features_file(filename, static=True, plots=False, fmt="npy")
+        replearning_feat = replearning.extract_features_file(filename, static=True, plots=False, fmt="npy")[0]
 
         print(prosody_feat.shape)
         print(phonation_feat.shape)
         print(articulation_feat.shape)
+        # print(phonological_feat.shape)
+        # print(glottal_feat.shape)
+        print(replearning_feat.shape)
+        
+        # all_feat = np.concatenate([prosody_feat + phonation_feat + articulation_feat])
+        all_feat = np.hstack((prosody_feat, phonation_feat, articulation_feat, replearning_feat)).ravel()
+
+        print(all_feat.shape)
+        
+        feat_ls.append(all_feat)
+
+    feat_array = np.array(feat_ls)
+
+    feat_array = np.nan_to_num(feat_array)
+
+    return feat_array
+
+
 
 
 
@@ -101,7 +126,7 @@ def gen_features_dict(speaker_folder):
 
 
 # generate speaker dictionary
-def gen_speaker_dict(speaker_name):
+def gen_speaker_dict(speaker_name, extract_full=False):
 
     speaker_folder = DATA_DIR + speaker_name + '/'
 
@@ -113,7 +138,16 @@ def gen_speaker_dict(speaker_name):
 
     for df_type in speaker_folder_ls:
 
-        speaker_dict[df_type] = gen_features_dict(speaker_folder + df_type + '/')
+        if extract_full:
+            if df_type == 'Original':
+                label = speaker_name
+            else:
+                label = df_type
+
+            speaker_dict[label] = extract_full_features(speaker_folder + df_type + '/')
+        
+        else:
+            speaker_dict[df_type] = gen_features_dict(speaker_folder + df_type + '/')
 
 
     return speaker_dict
