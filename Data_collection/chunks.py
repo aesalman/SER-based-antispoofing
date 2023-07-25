@@ -2,6 +2,7 @@ import os
 import glob
 import re
 import csv
+import pandas as pd
 from pydub import AudioSegment
 import speech_recognition as sr
 import noisereduce as nr
@@ -31,7 +32,7 @@ def combine_audio_files(input_folder):
     return combined_audio
 
 def split_audio_into_chunks(audio, chunk_duration, sr=48000):
-    metadata = []
+    metadata = {'filename': [], 'script': []}
 
     # Create an output directory
 
@@ -44,6 +45,9 @@ def split_audio_into_chunks(audio, chunk_duration, sr=48000):
     # Split the audio into one-minute chunks
     chunk_index = 1
     start_time = 0
+
+    filename_ls = []
+    script_ls = []
 
     while start_time + chunk_duration * 1000 <= total_duration:
         end_time = start_time + chunk_duration * 1000
@@ -59,14 +63,24 @@ def split_audio_into_chunks(audio, chunk_duration, sr=48000):
         chunk_reduced_noise.export(output_file, format="wav")
 
         transcript = transcribe_audio(output_file)
-        metadata.append([os.path.basename(output_file), transcript])
+        # metadata.append([os.path.basename(output_file), transcript])
+        filename_ls.append(os.path.basename(output_file))
+        script_ls.append(transcript)
         # Update the start time and chunk index for the next chunk
         start_time = end_time
         chunk_index += 1
-    with open(os.path.join(output_directory, 'metadata.csv'), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter='|')
-        writer.writerows(metadata)
+    # with open(os.path.join(output_directory, 'metadata.csv'), 'w', newline='') as csvfile:
+    #     writer = csv.writer(csvfile, delimiter='|')
+    #     writer.writerows(metadata)
 
+    # using pandas to write csv files
+    metadata['filename'] = filename_ls
+    metadata['script'] = script_ls
+
+    metadata_pd = pd.DataFrame(metadata)
+
+    metadata_pd.to_csv(os.path.join(output_directory, 'metadata.csv'))
+    
 
 if __name__ == "__main__":
     input_folder = input("Enter the path to the input folder: ")
