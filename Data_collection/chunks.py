@@ -30,8 +30,11 @@ def combine_audio_files(input_folder):
 
     return combined_audio
 
-def split_audio_into_chunks(audio, chunk_duration, sr=48000):
+def split_audio_into_chunks(input_file, chunk_duration, speaker_name, sr=48000):
     metadata = []
+
+    # load the input audio file
+    audio = AudioSegment.from_file(input_file)
 
     # Create an output directory
 
@@ -49,7 +52,7 @@ def split_audio_into_chunks(audio, chunk_duration, sr=48000):
         end_time = start_time + chunk_duration * 1000
 
         # Generate the output filename
-        output_file = os.path.join(output_directory, f"chunk_{chunk_index}.wav")
+        output_file = os.path.join(output_directory, speaker_name + f"_{chunk_index}.wav")
 
         # Extract the chunk from the audio and export as a single audio file
         chunk = audio[start_time:end_time]
@@ -69,11 +72,19 @@ def split_audio_into_chunks(audio, chunk_duration, sr=48000):
 
 
 if __name__ == "__main__":
-    input_folder = input("Enter the path to the input folder: ")
+    # input_folder = input("Enter the path to the input folder: ")
+
+    input_folder = "./sample_data/"
     chunk_duration = 60  # in seconds
-    output_directory = os.path.join(input_folder, 'chunks')
+
+    # There is no need to combine the audios
     # Combine all the audio files in the input folder
-    combined_audio = combine_audio_files(input_folder)
+    # combined_audio = combine_audio_files(input_folder)
+
+    input_audio_file = "speaker_A.wav" # speaker_A, speaker_B, speaker_C
+    speaker_name = "Obama" # Obama, Elon, Trump etc.
+
+    output_directory = os.path.join(input_folder, speaker_name)
 
     # Split the combined audio into one-minute chunks
-    split_audio_into_chunks(combined_audio, chunk_duration)
+    split_audio_into_chunks(input_audio_file, chunk_duration, speaker_name)

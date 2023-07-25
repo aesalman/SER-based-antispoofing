@@ -29,7 +29,7 @@ models = Models.from_api()
 # spkr_map = {'Obama': 'Barack_Obama', 'Elon Musk': 'Elon_Musk', 'Trump': 'Donald_Trump'}
 
 speaker_name = 'Barack_Obama' # Obama, Trump, Elon Musk, 
-text_file_path = '../Famous_Figures/Test_no_sentiments/Obamametadata.csv'
+text_file_path = '../Famous_Figures/Test_no_sentiments/ObamaUpdatedmetadata.csv'
 dst_path = '../Famous_Figures/Test_no_sentiments/' + speaker_name + 'ElevenLabs/' 
 
 text_pd = pd.read_csv(text_file_path, sep='|')
