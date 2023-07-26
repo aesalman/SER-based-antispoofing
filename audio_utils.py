@@ -4,6 +4,7 @@ from os import path
 from pydub import AudioSegment
 from pydub.playback import play
 import os
+import re
 from pathlib import Path
 from scipy.io import wavfile
 import noisereduce as nr
@@ -19,7 +20,9 @@ def convert_mp3_to_wav(src, dst):
     sound.export(dst, format="wav")
 
 
-
+def extract_number(f):
+    s = re.findall("\d+$",f)
+    return (int(s[0]) if s else -1,f)
 
 def Download(link, video_save_directory, only_audio=False):
     youtubeObject = YouTube(link)

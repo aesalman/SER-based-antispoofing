@@ -1,3 +1,4 @@
 pydub
 yt_dlp
 SpeechRecognition
+noisereduce

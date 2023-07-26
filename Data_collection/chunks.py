@@ -9,6 +9,10 @@ from scipy.io import wavfile
 import speech_recognition as sr
 import noisereduce as nr
 
+import sys
+sys.path.append("..")
+from audio_utils import extract_number
+
 def transcribe_audio(audio_path):
     r = sr.Recognizer()
 
@@ -33,7 +37,7 @@ def combine_audio_files(input_folder):
 
     return combined_audio
 
-def split_audio_into_chunks(input_folder, input_file, chunk_duration, sr=48000):
+def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_name, sr=48000):
     metadata = {'filename': [], 'script': []}
 
     # load the input audio file
@@ -51,6 +55,10 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, sr=48000):
 
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+        base_index = 0
+    else:
+        list_files = os.listdir(output_directory)
+        base_index = max(list_files, key=extract_number)
 
     # if not os.path.exists(noise_out_dir):
     #     os.makedirs(noise_out_dir)
@@ -67,11 +75,14 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, sr=48000):
     filename_ls = []
     script_ls = []
 
+
     while start_time + chunk_duration * 1000 <= total_duration:
         end_time = start_time + chunk_duration * 1000
 
         print("Generating Chunk File {}".format(chunk_index))
+        
         # Generate the output filename
+        file_index = base_index + chunk_index
         output_file = os.path.join(output_directory, speaker_name + f"_{chunk_index}.wav")
         # output_file_reduced_noise = os.path.join(noise_out_dir, speaker_name + f"_{chunk_index}.wav")
 
@@ -101,7 +112,15 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, sr=48000):
 
     metadata_pd = pd.DataFrame(metadata)
 
-    metadata_pd.to_csv(os.path.join(input_folder, speaker_name + '_metadata.csv'), index=False)
+    # metadata csv filename
+    output_csv = os.path.join(input_folder, speaker_name + '_metadata.csv')
+
+    if os.path.exists(output_csv):
+        base_metadata = pd.read_csv(output_csv)
+    
+        metadata_pd = pd.concat([base_metadata, metadata_pd])
+
+    metadata_pd.to_csv(output_csv, index=False)
     
 
 if __name__ == "__main__":

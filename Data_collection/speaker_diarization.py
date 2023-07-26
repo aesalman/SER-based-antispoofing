@@ -72,15 +72,16 @@ video_url = video_info['url']
 
 # Download the video as WebM format
 webm_file = audio_downloader.prepare_filename(video_info)
+print(webm_file)
 audio_downloader.process_info(video_info)
 os.rename(audio_downloader.prepare_filename(video_info), webm_file)
 
 # DO NOT SAVE every file with sofia name. It is confusing. Ask the user about speaker name. 
 # Convert the WebM file to WAV format
-wav_file = 'sofia.wav'
+wav_file = 'target_speaker.wav'
 convert_webm_to_wav(webm_file, wav_file)
 
-# os.remove(webm_file)
+os.remove(webm_file)
 
 ## Use the transcribe function from audio.py 
 # Upload the WAV file to AssemblyAI for transcription
@@ -122,3 +123,5 @@ while True:
 
     elif transcription_result['status'] == 'error':
         raise RuntimeError(f"Transcription failed: {transcription_result['error']}")
+    
+os.remove(wav_file)
