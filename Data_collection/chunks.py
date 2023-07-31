@@ -11,7 +11,7 @@ import noisereduce as nr
 
 import sys
 sys.path.append("..")
-from audio_utils import extract_number
+from audio_utils import extract_max_number
 
 def transcribe_audio(audio_path):
     r = sr.Recognizer()
@@ -58,7 +58,9 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_na
         base_index = 0
     else:
         list_files = os.listdir(output_directory)
-        base_index = max(list_files, key=extract_number)
+        print(list_files)
+        base_index = extract_max_number(list_files)
+        # base_index = max(list_files, key=extract_number)
 
     # if not os.path.exists(noise_out_dir):
     #     os.makedirs(noise_out_dir)
@@ -83,7 +85,7 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_na
         
         # Generate the output filename
         file_index = base_index + chunk_index
-        output_file = os.path.join(output_directory, speaker_name + f"_{chunk_index}.wav")
+        output_file = os.path.join(output_directory, speaker_name + f"_{file_index}.wav")
         # output_file_reduced_noise = os.path.join(noise_out_dir, speaker_name + f"_{chunk_index}.wav")
 
         # Extract the chunk from the audio and export as a single audio file
@@ -108,7 +110,7 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_na
 
     # using pandas to write csv files
     metadata['filename'] = filename_ls
-    metadata['script'] = script_ls
+    metadata['Transcript'] = script_ls
 
     metadata_pd = pd.DataFrame(metadata)
 

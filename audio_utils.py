@@ -20,9 +20,18 @@ def convert_mp3_to_wav(src, dst):
     sound.export(dst, format="wav")
 
 
-def extract_number(f):
-    s = re.findall("\d+$",f)
-    return (int(s[0]) if s else -1,f)
+def extract_max_number(f_ls, delim = '_'):
+    # s = re.findall("\d+$",f)
+    num_ls = []
+
+    for f in f_ls:
+
+        s_name = f.split('.')[0]
+        s_num = int(s_name.split(delim)[1])
+
+        num_ls.append(s_num)
+
+    return max(num_ls)
 
 def Download(link, video_save_directory, only_audio=False):
     youtubeObject = YouTube(link)
