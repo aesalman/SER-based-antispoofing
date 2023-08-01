@@ -38,7 +38,7 @@ def combine_audio_files(input_folder):
     return combined_audio
 
 def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_name, sr=48000):
-    metadata = {'filename': [], 'script': []}
+    metadata = {'filename': [], 'Transcript': []}
 
     # load the input audio file
     audio = AudioSegment.from_file(input_folder + input_file)
@@ -98,15 +98,16 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_na
         # chunk_reduced_noise.export(output_file_reduced_noise, format="wav")
 
         transcript = transcribe_audio(output_file)
+
+        if len(transcript) == 0:
+            continue
+
         # metadata.append([os.path.basename(output_file), transcript])
         filename_ls.append(os.path.basename(output_file))
         script_ls.append(transcript)
         # Update the start time and chunk index for the next chunk
         start_time = end_time
         chunk_index += 1
-    # with open(os.path.join(output_directory, 'metadata.csv'), 'w', newline='') as csvfile:
-    #     writer = csv.writer(csvfile, delimiter='|')
-    #     writer.writerows(metadata)
 
     # using pandas to write csv files
     metadata['filename'] = filename_ls
@@ -136,7 +137,7 @@ if __name__ == "__main__":
     # combined_audio = combine_audio_files(input_folder)
 
     input_audio_file = "speaker_A.wav" # speaker_A, speaker_B, speaker_C
-    speaker_name = "Obama" # Obama, Elon, Trump etc.
+    speaker_name = "Hillary" # Obama, Elon, Trump etc.
 
     # Split the combined audio into one-minute chunks
     split_audio_into_chunks(input_folder, input_audio_file, chunk_duration, speaker_name)
