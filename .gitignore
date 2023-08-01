@@ -3,3 +3,4 @@ output/
 venv
 sample_data
 .env
+env/
