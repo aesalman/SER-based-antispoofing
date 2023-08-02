@@ -16,10 +16,14 @@ from audio_utils import extract_max_number
 def transcribe_audio(audio_path):
     r = sr.Recognizer()
 
-    with sr.AudioFile(audio_path) as source:
-        audio_data = r.record(source)
-        text = r.recognize_google(audio_data)
-        return text
+    try:
+        with sr.AudioFile(audio_path) as source:
+            audio_data = r.record(source)
+            text = r.recognize_google(audio_data)
+            return text
+    except sr.UnknownValueError:
+        print(f"Could not transcribe {audio_path}. UnknownValueError.")
+        return ""
 
 def combine_audio_files(input_folder):
     combined_audio = AudioSegment.empty()
@@ -97,14 +101,20 @@ def split_audio_into_chunks(input_folder, input_file, chunk_duration, speaker_na
         # chunk_reduced_noise = nr.reduce_noise(y=chunk_array, sr=sr)
         # chunk_reduced_noise.export(output_file_reduced_noise, format="wav")
 
-        transcript = transcribe_audio(output_file)
+        try:
+            transcript = transcribe_audio(output_file)
 
-        if len(transcript) == 0:
-            continue
+         # Skip this file if the transcript is empty
+            if len(transcript) == 0:
+                print(f"Skipping file {output_file} due to empty transcript")
+            else:
+                # Append to metadata only if transcript is not empty
+                filename_ls.append(os.path.basename(output_file))
+                script_ls.append(transcript)
 
-        # metadata.append([os.path.basename(output_file), transcript])
-        filename_ls.append(os.path.basename(output_file))
-        script_ls.append(transcript)
+        except sr.UnknownValueError:
+                print(f"Skipping file {output_file} due to UnknownValueError")
+
         # Update the start time and chunk index for the next chunk
         start_time = end_time
         chunk_index += 1
@@ -136,8 +146,8 @@ if __name__ == "__main__":
     # Combine all the audio files in the input folder
     # combined_audio = combine_audio_files(input_folder)
 
-    input_audio_file = "speaker_A.wav" # speaker_A, speaker_B, speaker_C
-    speaker_name = "Hillary" # Obama, Elon, Trump etc.
+    input_audio_file = "speaker_D.wav" # speaker_A, speaker_B, speaker_C
+    speaker_name = "Trump" # Obama, Elon, Trump etc.
 
     # Split the combined audio into one-minute chunks
     split_audio_into_chunks(input_folder, input_audio_file, chunk_duration, speaker_name)

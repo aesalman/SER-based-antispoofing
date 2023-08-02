@@ -4,3 +4,4 @@ venv
 sample_data
 .env
 env/
+__pycache__/audio_utils.cpython-39.pyc
